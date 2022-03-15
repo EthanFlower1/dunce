@@ -72,6 +72,7 @@ table {
   padding-right: 40px;
 }
 #app {
+  margin-top: 40px;
   display: flex;
   justify-content: space-between;
 }

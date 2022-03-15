@@ -46,10 +46,16 @@ var renderTaglist = function() {
 };
 
 var postQuestion = function () {
-  debugger;
   var text = document.getElementById('message').value;
   console.log(text);
   questionArray.unshift(text);
+  var questionObj = {
+    message: text,
+    timestamp: new Date(),
+    replies: [],
+    votes: 0,
+  }
+  questionObjects.unshift(questionObj);
   renderFeed();
 
   // if text contains a hashtag
@@ -58,6 +64,8 @@ var postQuestion = function () {
     // hashtag function as a function of text
     tagFinder(text.substring(idx, text.length));
   }
+  // clear form after submission
+  document.getElementById('message').value = '';
 };
 
 var tagFinder = function(text) {
@@ -76,7 +84,7 @@ var tagFinder = function(text) {
   renderTaglist();
 };
 
-var renderFeed = function (tag) {
+var renderFeedv0 = function (tag) {
   questionList.replaceChildren();
   var keyword = tag || '';
   questionArray.forEach( element => {
@@ -89,10 +97,44 @@ var renderFeed = function (tag) {
   });
 };
 
+var renderFeed = function(tag) {
+  questionList.replaceChildren();
+  var keyword = tag || '';
+  questionObjects.forEach( object => {
+    if (object.message.includes(keyword)) {
+      var question = document.createElement('li');
+      var message = document.createElement('p');
+      var timestamp = document.createElement('p');
+      var votes  = document.createElement('p');
+      var replies = document.createElement('p');
+
+      question.className = 'question';
+      message.className = 'question-body';
+      timestamp.className = 'timestamp';
+      votes.className = 'votes';
+      replies.className = 'replies'
+
+      question.textContent = object.message;
+      timestamp.textContent = object.timestamp;
+      votes.textContent = object.votes.toString();
+      replies.textContent = 'Replies (' + object.replies.length.toString() + ')';
+
+      question.appendChild(message);
+      question.appendChild(timestamp);
+      question.appendChild(votes);
+      question.appendChild(replies);
+
+      questionList.appendChild(question);
+    }
+  })
+}
 // ======= Set attributes / event listeners (providing appropriate handlers as input) =======
 
 title.setAttribute('class', 'title');
 title.textContent = 'dunce.';
+title.addEventListener('click', function() {
+  renderFeed();
+});
 header.setAttribute('class', 'header');
 aside.setAttribute('class', 'tag-list');
 main.setAttribute('class', 'main');
@@ -131,6 +173,27 @@ app.appendChild(footer);
 var tags = ['#html', '#css', '#js', '#git', '#ds&algorithms', '#computerScience', '#math', '#linux', '#testing'];
 
 var questionArray = ['At ethan erat pellentesque adipiscing commodo. Diam phasellus vestibulum lorem sed. Pharetra vel turpis nunc eget lorem dolor sed viverra. Quisque', 'At erat pellentesque adipiscing commodo. Diam phasellus vestibulum lorem sed. Pharetra vel turpis nunc eget lorem dolor sed viverra. Quisque', 'At erat pellentesque adipiscing commodo. Diam phasellus vestibulum lorem sed. Pharetra vel turpis nunc eget lorem dolor sed viverra. Quisque', 'Andres erat pellentesque adipiscing commodo. Diam phasellus vestibulum lorem sed. Pharetra vel turpis nunc eget lorem dolor sed viverra. Quisque'];
+
+// sample question object
+// var questionObj = {
+//   message: 'question',
+//   timestamp: new Date(),
+//   replies: [],
+//   votes 0
+// };
+
+var questionObjects = [];
+for (var i = 0; i < questionArray.length; i++) {
+  var questionObj = {
+    message: questionArray[i],
+    timestamp: new Date(),
+    replies: [],
+    votes: 0,
+  }
+  questionObjects.push(questionObj);
+}
+
+
 
 renderTaglist();
 renderFeed();
